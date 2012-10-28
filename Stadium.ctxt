@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Stadium()
+comment0.text=\n\ Constructor\ for\ objects\ of\ class\ Stadium.\n\ \n
+comment1.params=
+comment1.target=Football\ getFootball()
+comment2.params=
+comment2.target=Aubie\ getAubie()
+comment3.params=fGoodKick
+comment3.target=void\ showKickResult(boolean)
+numComments=4
