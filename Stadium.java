@@ -1,10 +1,17 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Stadium here.
+ * This is the base world for the KickItAubie game.
+ *
+ * The background image is a picture of Jordan-Hare Stadium at Auburn University.
+ * Aubie, as you probably know, is the team mascot.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Aubie is the primary actor in the stadium and will kick field goals in this
+ * interactive game.
+ * 
+ * Explicit knowledge about the content of the background image is required by
+ * the programmer, as the content of the game is dependent upon the background.
+ *
  */
 public class Stadium extends World
 {
