@@ -16,6 +16,7 @@ public class Football extends Actor
     double kickFlightTime;
     int x0;
     int y0;
+    long kickEndMS = 0;
 
     // used for debugging
     boolean singlestep = false;
@@ -27,13 +28,14 @@ public class Football extends Actor
     static double DEFAULT_DIRECTION_SLOPE = 0;
     static double SCALE = 10.0; // meters to pixels scale factor
     static double GRAVITY = 9.8; // meters per second-squared
+    static long END_OF_KICK_DELAY_MILLIS = 2000;
     
     GreenfootImage[] giF = new GreenfootImage[] { 
-        new GreenfootImage( "football0.jpg" ),
-        new GreenfootImage( "football1.jpg" ),
-        new GreenfootImage( "football2.jpg" ),
-        new GreenfootImage( "football3.jpg" ),
-        new GreenfootImage( "football4.jpg" ) 
+        new GreenfootImage( "football0.png" ),
+        new GreenfootImage( "football1.png" ),
+        new GreenfootImage( "football2.png" ),
+        new GreenfootImage( "football3.png" ),
+        new GreenfootImage( "football4.png" ) 
     };
     
     int iRotation = 0;
@@ -63,13 +65,21 @@ public class Football extends Actor
     }    
     
     public void reset() {
-       ((Stadium)getWorld()).showKickResult( isKickGood() );
-          
-       // The ball is back to its launch height, the kick is over; so, reset the ball.
-       kickBeginMS = 0;
-       kickInc = 0;
-       setLocation( x0, y0 );
-       setRotating( false );
+       
+       if ( kickEndMS == 0 ) {
+           ((Stadium)getWorld()).showKickResult( isKickGood() );
+           kickEndMS = System.currentTimeMillis();
+           setRotating( false );
+       } else {
+           
+           if ( System.currentTimeMillis() - kickEndMS > END_OF_KICK_DELAY_MILLIS ) {
+               // The ball is back to its launch height, the kick is over; so, reset the ball.
+               kickBeginMS = 0;
+               kickEndMS = 0;
+               kickInc = 0;
+               setLocation( x0, y0 );
+            }
+        }
     }
     
     public void setRotating( boolean f ) {
@@ -114,7 +124,7 @@ public class Football extends Actor
     public void kick( double angleLaunchDegrees, int velocity, double dirSlope ) {
         this.angleLaunchRadians = Math.toRadians(angleLaunchDegrees);
         this.velocity = velocity;
-        this.dirSlope = dirSlope / SCALE; // the slope of the direction of the kick
+        this.dirSlope = dirSlope; // the slope of the direction of the kick
         this.kickBeginMS = System.currentTimeMillis();
         
         // Used for sanity checking the expected flight
@@ -161,7 +171,7 @@ public class Football extends Actor
             
             // Trajectory deltas in meters
             double xdeltaTraj = velocity * tSecs * Math.cos( angleLaunchRadians );
-            double ydeltaTraj = (
+            double ydeltaTraj = -(
                 (velocity * tSecs * Math.sin( angleLaunchRadians ))
                 - (GRAVITY * Math.pow(tSecs,2) / 2)
                 );
@@ -175,12 +185,12 @@ public class Football extends Actor
             // Here, the angular movement is along the line:
             //    deltay += mx, where m is the directional slope of the kick
             double xdeltaWorld = xdeltaTraj;
-            double ydeltaWorld = ydeltaTraj + (dirSlope / SCALE * xdeltaTraj);
+            double ydeltaWorld = ydeltaTraj + (dirSlope * xdeltaTraj);
             
             double x = x0 + xdeltaWorld;
-            double y = y0 - ydeltaWorld;
+            double y = y0 + ydeltaWorld;
             
-            if (ydeltaTraj < 0 ) {
+            if (ydeltaTraj > 0 ) {
                 reset();
             }
             else {

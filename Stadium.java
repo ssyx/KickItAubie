@@ -16,6 +16,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Stadium extends World
 {
 
+   boolean showgrid = false; // grid for debugging placement/alignment
    Football football;
    Aubie aubie;
    
@@ -35,6 +36,16 @@ public class Stadium extends World
         addObject( aubie, 100, 300 );
         addObject( new Referee(), 770, 280 );
         addObject( new Referee(), 920, 360 );
+        
+        GreenfootImage gi = getBackground();
+        gi.setColor( java.awt.Color.RED );
+        
+        if ( showgrid == true ) {
+            for ( int i = 0; i < gi.getHeight(); i += 100 ) {
+                gi.drawLine( 0, i, getWidth(), i );
+                gi.drawLine( i, 0, i, getHeight() );
+            }
+        }
     }
     
     public Football getFootball() {
